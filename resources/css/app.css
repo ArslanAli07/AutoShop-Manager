@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans:
+        "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+    --font-display: "Syne", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+    --app-bg: #f5f4f0;
+    --app-surface: #ffffff;
+    --app-border: #e0ddd5;
+    --app-accent: #c4960a;
+    --app-text: #111111;
+    --app-muted: #888888;
+}
+
+html.dark {
+    --app-bg: #0d0d0d;
+    --app-surface: #161616;
+    --app-border: #2a2a2a;
+    --app-accent: #e8c84a;
+    --app-text: #f2f2f2;
+    --app-muted: #6b6b6b;
+}
+
+html {
+    color-scheme: light;
+    font-size: 15.5px;
+}
+
+html.dark {
+    color-scheme: dark;
+}
+
+body {
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(196, 150, 10, 0.09),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at top right,
+            rgba(0, 0, 0, 0.03),
+            transparent 30%
+        ),
+        var(--app-bg);
+    color: var(--app-text);
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+    font-family: var(--font-display);
+}
+
+/* Form inputs keep normal casing while typing,
+   but displayed values are uppercased by the body rule */
+input,
+textarea,
+select {
+    text-transform: none;
+}
+
+::selection {
+    background: rgba(196, 150, 10, 0.24);
+    color: var(--app-text);
+}
+
+/* ── Theme toggle label ─────────────────────────── */
+/* Light mode: show "Light", hide "Dark" */
+.theme-label-dark {
+    display: none;
+}
+.theme-label-light {
+    display: inline;
+}
+
+/* Dark mode: show "Dark", hide "Light" */
+html[data-theme="dark"] .theme-label-light {
+    display: none;
+}
+html[data-theme="dark"] .theme-label-dark {
+    display: inline;
+}
+
+/* ── Theme toggle icons ─────────────────────────── */
+/* Light mode: show sun, hide moon */
+.theme-icon-dark {
+    display: none;
+}
+.theme-icon-light {
+    display: inline;
+}
+
+/* Dark mode: show moon, hide sun */
+html[data-theme="dark"] .theme-icon-light {
+    display: none;
+}
+html[data-theme="dark"] .theme-icon-dark {
+    display: inline;
+}
+
+/* ── Select & Option Dark Mode Fix ──────────────── */
+select {
+    background-color: var(--app-surface) !important;
+    color: var(--app-text) !important;
+}
+
+html.dark select {
+    color-scheme: dark !important;
+    background-color: var(--app-surface) !important;
+    color: var(--app-text) !important;
+}
