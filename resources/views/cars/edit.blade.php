@@ -7,7 +7,7 @@
 @section('content')
     <div class="max-w-2xl mx-auto">
         <form action="{{ route('cars.update', $car) }}" method="post"
-            class="space-y-5 rounded-[2rem] border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
+            class="space-y-5 rounded-3xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
             @csrf
             @method('PUT')
             <div class="grid gap-5">
@@ -81,10 +81,10 @@
 
             <div class="flex items-center gap-3 pt-4">
                 <button type="submit"
-                    class="rounded-2xl bg-[var(--app-accent)] px-6 py-2 text-sm font-semibold text-white transition hover:opacity-90">Update
+                    class="rounded-2xl bg-[var(--app-accent)] px-6 py-2 text-sm font-semibold text-black transition hover:opacity-90">Update
                     Car</button>
                 <a href="{{ route('cars.show', $car) }}"
-                    class="text-sm font-medium text-[var(--app-muted)] transition hover:text-[var(--app-text)]">Cancel</a>
+                    class="inline-flex items-center rounded-xl border border-[var(--app-border)] px-6 py-2.5 text-sm font-medium text-[var(--app-text)] transition hover:border-[var(--app-accent)] hover:text-[var(--app-accent)]">Cancel</a>
             </div>
         </form>
     </div>

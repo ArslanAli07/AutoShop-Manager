@@ -2,6 +2,7 @@
 
 @section('title', 'Job Card ' . $job->job_number . ' | AutoShop Manager')
 @section('meta_description', 'View and manage job card details, services, parts, and payment status.')
+@section('page_title', 'Job ' . $job->job_number)
 
 @section('content')
     <section aria-label="Job card details" class="w-full space-y-6">
@@ -17,7 +18,6 @@
             </div>
         @endif
 
-        {{-- Header: Perfect Symmetrical Layout (Approved - Keep Intact) --}}
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border-b border-[var(--app-border)] pb-6 w-full">
             <div class="space-y-3">
                 <div class="flex flex-wrap items-center gap-3">
@@ -25,64 +25,9 @@
                     
                     {{-- Status Badges: Spacious Paddings & High-Fidelity SVG Icons --}}
                     <div class="flex flex-wrap items-center gap-2">
-                        {{-- Job Status Pill --}}
-                        <span class="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold shadow-sm
-                            @if ($job->status === 'received') border-blue-500/30 bg-blue-500/10 text-blue-400
-                            @elseif ($job->status === 'in_progress') border-amber-500/30 bg-amber-500/10 text-amber-400
-                            @elseif ($job->status === 'ready') border-emerald-500/30 bg-emerald-500/10 text-emerald-400
-                            @elseif ($job->status === 'delivered') border-gray-500/30 bg-gray-500/10 text-gray-400
-                            @else border-red-500/30 bg-red-500/10 text-red-400 @endif">
-                            @if ($job->status === 'received')
-                                <svg class="h-4 w-4 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z" />
-                                </svg>
-                                Car Received
-                            @elseif ($job->status === 'in_progress')
-                                <svg class="h-4 w-4 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                Repairing
-                            @elseif ($job->status === 'ready')
-                                <svg class="h-4 w-4 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                Ready for Pickup
-                            @elseif ($job->status === 'delivered')
-                                <svg class="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                Delivered
-                            @else
-                                <svg class="h-4 w-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                Cancelled
-                            @endif
-                        </span>
+                        <x-status-badge :status="$job->status" variant="display" />
 
-                        {{-- Payment Status Pill --}}
-                        <span class="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold shadow-sm
-                            @if ($job->payment_status === 'paid') border-emerald-500/30 bg-emerald-500/10 text-emerald-400
-                            @elseif ($job->payment_status === 'partial') border-amber-500/30 bg-amber-500/10 text-amber-400
-                            @else border-red-500/30 bg-red-500/10 text-red-400 @endif">
-                            @if ($job->payment_status === 'paid')
-                                <svg class="h-4 w-4 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                Fully Paid
-                            @elseif($job->payment_status === 'partial')
-                                <svg class="h-4 w-4 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2" />
-                                </svg>
-                                Partially Paid
-                            @else
-                                <svg class="h-4 w-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                Unpaid
-                            @endif
-                        </span>
+                        <x-payment-badge :status="$job->payment_status" variant="display" />
                     </div>
                 </div>
                 <p class="text-base text-[var(--app-muted)] flex items-center gap-1.5">
@@ -102,7 +47,10 @@
                         @method('PATCH')
                         <input type="hidden" name="status" value="in_progress">
                         <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-base font-bold text-white transition hover:bg-blue-700 shadow-sm hover:shadow cursor-pointer">
-                            ⚙️ Start Repairing
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                            </svg>
+                            Start Repairing
                         </button>
                     </form>
                 @elseif ($job->status === 'in_progress')
@@ -111,7 +59,10 @@
                         @method('PATCH')
                         <input type="hidden" name="status" value="ready">
                         <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-[var(--app-accent)] px-5 py-2.5 text-base font-bold text-black transition hover:opacity-90 shadow-sm hover:shadow cursor-pointer">
-                            ✅ Mark Ready
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Mark Ready
                         </button>
                     </form>
                 @elseif ($job->status === 'ready')
@@ -120,20 +71,17 @@
                         @method('PATCH')
                         <input type="hidden" name="status" value="delivered">
                         <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-base font-bold text-white transition hover:bg-emerald-700 shadow-sm hover:shadow cursor-pointer">
-                            🔑 Deliver
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M21 2l-2 2m-7.6 1.4A5.5 5.5 0 1 0 5.2 14.8a5.5 5.5 0 0 0 7.7-7.7L21 2v3h-3v3h-3v-2z"></path>
+                            </svg>
+                            Deliver
                         </button>
                     </form>
                 @endif
 
-                <a href="{{ route('jobs.print', $job->id) }}" target="_blank"
-                    class="inline-flex items-center gap-2 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] px-5 py-2.5 text-base font-bold text-[var(--app-text)] transition hover:bg-[var(--app-bg)] shadow-sm">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                    </svg>
-                    Print Receipt
-                </a>
+
                 @if ($job->payment_status !== 'paid')
-                    <button onclick="document.getElementById('payment-modal').classList.remove('hidden')"
+                    <button type="button" onclick="document.getElementById('payment-modal').classList.remove('hidden')"
                         class="inline-flex items-center gap-2 rounded-xl bg-green-600 px-5 py-2.5 text-base font-bold text-white transition hover:bg-green-700 shadow-sm hover:shadow">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -141,25 +89,20 @@
                         Record Payment
                     </button>
                 @endif
-                <a href="{{ route('jobs.edit', $job->id) }}"
-                    class="inline-flex items-center gap-2 rounded-xl bg-[var(--app-accent)] px-5 py-2.5 text-base font-bold text-black transition hover:opacity-90 shadow-sm">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                    Edit
-                </a>
+
             </div>
         </div>
 
-        <!-- strictly Horizontal 3-Column Profile Row (Forced Flex-Row side-by-side) -->
-        <div class="flex flex-row gap-6 w-full mb-6">
+        <div class="grid grid-cols-1 gap-4 w-full mb-6 lg:grid-cols-3">
 
             {{-- Customer Card --}}
-            <div class="flex-1 rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-5 shadow-sm flex flex-col">
+            <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-5 shadow-sm flex flex-col">
                 {{-- Card Header --}}
                 <div class="flex items-center justify-between border-b border-[var(--app-border)] pb-3 mb-4">
                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-[var(--app-muted)]">Customer</h3>
-                    <span class="text-base">👤</span>
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
                 </div>
                 {{-- Full-width label/value rows --}}
                 <div class="flex flex-col gap-3 flex-1 justify-center">
@@ -173,11 +116,11 @@
                         </div>
                         <div class="flex items-center justify-between w-full py-1.5 border-b border-[var(--app-border)]/40">
                             <span class="text-xs font-extrabold uppercase tracking-wide text-[var(--app-muted)]">Phone</span>
-                            <span class="text-sm font-bold text-[var(--app-text)]">📞 {{ $job->customer->phone }}</span>
+                            <span class="text-sm font-bold text-[var(--app-text)]">{{ $job->customer->phone }}</span>
                         </div>
                         <div class="flex items-start justify-between w-full py-1.5">
                             <span class="text-xs font-extrabold uppercase tracking-wide text-[var(--app-muted)]">Address</span>
-                            <span class="text-sm font-bold text-[var(--app-text)] text-right max-w-[60%]">📍 {{ $job->customer->address }}</span>
+                            <span class="text-sm font-bold text-[var(--app-text)] text-right max-w-[60%]">{{ $job->customer->address }}</span>
                         </div>
                     @else
                         <div class="flex flex-1 items-center justify-center">
@@ -188,11 +131,13 @@
             </div>
 
             {{-- Vehicle Card --}}
-            <div class="flex-1 rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-5 shadow-sm flex flex-col">
+            <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-5 shadow-sm flex flex-col">
                 {{-- Card Header --}}
                 <div class="flex items-center justify-between border-b border-[var(--app-border)] pb-3 mb-4">
                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-[var(--app-muted)]">Vehicle</h3>
-                    <span class="text-base">🚗</span>
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+                    </svg>
                 </div>
                 {{-- Full-width label/value rows --}}
                 <div class="flex flex-col gap-3 flex-1 justify-center">
@@ -210,11 +155,11 @@
                         </div>
                         <div class="flex items-center justify-between w-full py-1.5 border-b border-[var(--app-border)]/40">
                             <span class="text-xs font-extrabold uppercase tracking-wide text-[var(--app-muted)]">Color</span>
-                            <span class="text-sm font-bold text-[var(--app-text)]">🎨 {{ $job->car->color }}</span>
+                            <span class="text-sm font-bold text-[var(--app-text)]">{{ $job->car->color }}</span>
                         </div>
                         <div class="flex items-center justify-between w-full py-1.5">
                             <span class="text-xs font-extrabold uppercase tracking-wide text-[var(--app-muted)]">Year</span>
-                            <span class="text-sm font-bold text-[var(--app-text)]">📅 {{ $job->car->year }}</span>
+                            <span class="text-sm font-bold text-[var(--app-text)]">{{ $job->car->year }}</span>
                         </div>
                     @else
                         <div class="flex flex-1 items-center justify-center">
@@ -225,11 +170,13 @@
             </div>
 
             {{-- Dates & Mileage Card --}}
-            <div class="flex-1 rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-5 shadow-sm flex flex-col">
+            <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-5 shadow-sm flex flex-col">
                 {{-- Card Header --}}
                 <div class="flex items-center justify-between border-b border-[var(--app-border)] pb-3 mb-4">
                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-[var(--app-muted)]">Dates & Mileage</h3>
-                    <span class="text-base">📊</span>
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
                 </div>
                 {{-- Full-width label/value rows --}}
                 <div class="flex flex-col gap-3 flex-1 justify-center">
@@ -239,7 +186,7 @@
                     </div>
                     <div class="flex items-center justify-between w-full py-1.5 border-b border-[var(--app-border)]/40">
                         <span class="text-xs font-extrabold uppercase tracking-wide text-[var(--app-muted)]">Mileage In</span>
-                        <span class="text-sm font-bold text-[var(--app-accent)]">{{ $job->mileage_in ? number_format($job->mileage_in) . ' km' : 'N/A' }}</span>
+                        <span class="text-sm font-bold text-[var(--app-text)]">{{ $job->mileage_in ? number_format($job->mileage_in) . ' km' : 'N/A' }}</span>
                     </div>
                     @if ($job->date_out)
                         <div class="flex items-center justify-between w-full py-1.5 border-b border-[var(--app-border)]/40">
@@ -248,7 +195,7 @@
                         </div>
                         <div class="flex items-center justify-between w-full py-1.5">
                             <span class="text-xs font-extrabold uppercase tracking-wide text-[var(--app-muted)]">Mileage Out</span>
-                            <span class="text-sm font-bold text-[var(--app-accent)]">{{ $job->mileage_out ? number_format($job->mileage_out) . ' km' : 'N/A' }}</span>
+                            <span class="text-sm font-bold text-[var(--app-text)]">{{ $job->mileage_out ? number_format($job->mileage_out) . ' km' : 'N/A' }}</span>
                         </div>
                     @else
                         <div class="flex items-center justify-between w-full py-1.5">
@@ -261,14 +208,15 @@
 
         </div>
 
-        <!-- Services & Parts: Side-by-Side Responsive Grid -->
         <div class="grid gap-6 lg:grid-cols-2 w-full">
             {{-- Services Table --}}
             <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] shadow-sm overflow-hidden flex flex-col justify-between">
                 <div>
                     <div class="border-b border-[var(--app-border)] bg-[var(--app-bg)] px-6 py-4 flex items-center justify-between">
                         <div class="flex items-center gap-2 text-base font-bold">
-                            <span>🛠️</span>
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                            </svg>
                             <h2 class="text-[var(--app-text)] font-extrabold">Services Performed</h2>
                         </div>
                         <span class="rounded-full bg-[var(--app-border)] px-3 py-1 text-xs font-extrabold text-[var(--app-text)]">
@@ -307,7 +255,9 @@
                         </div>
                     @else
                         <div class="p-8 text-center text-sm text-[var(--app-muted)] flex flex-col items-center justify-center gap-2">
-                            <span>🔧</span>
+                            <svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                            </svg>
                             <span class="font-semibold">No services added to this job card</span>
                         </div>
                     @endif
@@ -327,7 +277,9 @@
                 <div>
                     <div class="border-b border-[var(--app-border)] bg-[var(--app-bg)] px-6 py-4 flex items-center justify-between">
                         <div class="flex items-center gap-2 text-base font-bold">
-                            <span>📦</span>
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/>
+                            </svg>
                             <h2 class="text-[var(--app-text)] font-extrabold">Parts Replaced</h2>
                         </div>
                         <span class="rounded-full bg-[var(--app-border)] px-3 py-1 text-xs font-extrabold text-[var(--app-text)]">
@@ -372,7 +324,9 @@
                         </div>
                     @else
                         <div class="p-8 text-center text-sm text-[var(--app-muted)] flex flex-col items-center justify-center gap-2">
-                            <span>📦</span>
+                            <svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/>
+                            </svg>
                             <span class="font-semibold">No parts added to this job card</span>
                         </div>
                     @endif
@@ -388,7 +342,6 @@
             </div>
         </div>
 
-        <!-- Super Sleek Horizontal Totals Summary Strip (Centered horizontally & Larger Fonts) -->
         <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6 shadow-sm w-full">
             <div class="flex flex-row items-center justify-center gap-6 md:gap-12 text-center">
                 <div class="flex items-center gap-2 text-base md:text-lg">
@@ -412,7 +365,9 @@
         @if ($job->notes)
             <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] shadow-sm p-5 w-full">
                 <h3 class="text-sm font-extrabold text-[var(--app-text)] mb-3 flex items-center gap-2">
-                    <span>📝</span>
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/>
+                    </svg>
                     <span>Service Notes</span>
                 </h3>
                 <p class="text-sm text-[var(--app-text)] whitespace-pre-wrap leading-relaxed bg-[var(--app-bg)]/45 p-4 rounded-xl border border-[var(--app-border)]/50 font-medium">
@@ -421,7 +376,6 @@
             </div>
         @endif
 
-        <!-- Consolidated Unified Footer Section: strictly horizontal row on all viewports -->
         <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] shadow-md p-6 w-full flex flex-row flex-wrap items-center justify-center gap-8 md:gap-14">
             {{-- Payment Breakdown (Left side - Large fonts) --}}
             <div class="flex flex-row items-center justify-center gap-6 md:gap-8">
@@ -511,8 +465,11 @@
 
                 <div class="flex gap-3 pt-2">
                     <button type="submit"
-                        class="flex-1 rounded-lg bg-green-600 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700">
-                        ✓ Confirm Payment
+                        class="flex-1 flex items-center justify-center gap-2 rounded-lg bg-green-600 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M5 13l4 4L19 7" />
+                        </svg>
+                        Confirm Payment
                     </button>
                     <button type="button" onclick="document.getElementById('payment-modal').classList.add('hidden')"
                         class="flex-1 rounded-lg border border-[var(--app-border)] py-2.5 text-sm font-medium text-[var(--app-text)] transition hover:bg-[var(--app-bg)]">

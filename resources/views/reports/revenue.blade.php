@@ -54,13 +54,7 @@
                             <td class="px-6 py-4">{{ $job->customer->name }}</td>
                             <td class="px-6 py-4 text-right font-medium">Rs. {{ number_format($job->amount_paid) }}</td>
                             <td class="px-6 py-4 text-right">
-                                @if($job->payment_status === 'paid')
-                                    <span class="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800 dark:bg-green-900/30 dark:text-green-400">Paid</span>
-                                @elseif($job->payment_status === 'partial')
-                                    <span class="inline-flex rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-semibold text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">Partial</span>
-                                @else
-                                    <span class="inline-flex rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800 dark:bg-red-900/30 dark:text-red-400">Unpaid</span>
-                                @endif
+                                <x-payment-badge :status="$job->payment_status" />
                             </td>
                         </tr>
                     @empty
@@ -129,7 +123,7 @@
                             },
                             ticks: {
                                 color: textColor,
-                                font: { family: "'Inter', sans-serif" }
+                                font: { family: "'IBM Plex Sans', sans-serif" }
                             }
                         },
                         y: {
@@ -140,7 +134,7 @@
                             },
                             ticks: {
                                 color: textColor,
-                                font: { family: "'Inter', sans-serif" },
+                                font: { family: "'IBM Plex Sans', sans-serif" },
                                 callback: function(value) {
                                     if (value >= 1000) {
                                         return value / 1000 + 'k';

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use App\Models\Customer;
 use App\Models\Job;
+use App\Http\Requests\StoreCustomerRequest;
+use App\Http\Requests\UpdateCustomerRequest;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -45,14 +47,9 @@ class CustomerController extends Controller
         return view('customers.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreCustomerRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:100',
-            'phone' => 'required|string|max:20',
-            'address' => 'nullable|string',
-            'notes' => 'nullable|string',
-        ]);
+        $data = $request->validated();
 
         Customer::create($data);
 
@@ -87,14 +84,9 @@ class CustomerController extends Controller
         return view('customers.edit', compact('customer'));
     }
 
-    public function update(Request $request, Customer $customer)
+    public function update(UpdateCustomerRequest $request, Customer $customer)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:100',
-            'phone' => 'required|string|max:20',
-            'address' => 'nullable|string',
-            'notes' => 'nullable|string',
-        ]);
+        $data = $request->validated();
 
         $customer->update($data);
 

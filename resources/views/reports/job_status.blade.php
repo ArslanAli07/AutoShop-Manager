@@ -20,7 +20,7 @@
 
         <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
             <div class="flex items-center gap-3 mb-2">
-                <span class="flex h-3 w-3 rounded-full bg-yellow-500"></span>
+                <span class="flex h-3 w-3 rounded-full bg-amber-500"></span>
                 <h3 class="text-sm font-medium text-[var(--app-muted)]">In Progress</h3>
             </div>
             <p class="text-3xl font-bold text-[var(--app-text)]">{{ $statusCounts['in_progress'] }}</p>
@@ -28,7 +28,7 @@
 
         <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
             <div class="flex items-center gap-3 mb-2">
-                <span class="flex h-3 w-3 rounded-full bg-orange-500"></span>
+                <span class="flex h-3 w-3 rounded-full bg-emerald-500"></span>
                 <h3 class="text-sm font-medium text-[var(--app-muted)]">Ready</h3>
             </div>
             <p class="text-3xl font-bold text-[var(--app-text)]">{{ $statusCounts['ready'] }}</p>
@@ -36,7 +36,7 @@
 
         <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
             <div class="flex items-center gap-3 mb-2">
-                <span class="flex h-3 w-3 rounded-full bg-green-500"></span>
+                <span class="flex h-3 w-3 rounded-full bg-gray-400"></span>
                 <h3 class="text-sm font-medium text-[var(--app-muted)]">Delivered</h3>
             </div>
             <p class="text-3xl font-bold text-[var(--app-text)]">{{ $statusCounts['delivered'] }}</p>
@@ -44,7 +44,7 @@
 
         <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
             <div class="flex items-center gap-3 mb-2">
-                <span class="flex h-3 w-3 rounded-full bg-gray-500"></span>
+                <span class="flex h-3 w-3 rounded-full bg-red-500"></span>
                 <h3 class="text-sm font-medium text-[var(--app-muted)]">Cancelled</h3>
             </div>
             <p class="text-3xl font-bold text-[var(--app-text)]">{{ $statusCounts['cancelled'] }}</p>
@@ -64,10 +64,10 @@
                 $max = max(1, array_sum($statusCounts));
                 $stages = [
                     'received'    => ['color' => 'bg-blue-500',   'text' => 'text-blue-500',   'label' => 'Received'],
-                    'in_progress' => ['color' => 'bg-yellow-500', 'text' => 'text-yellow-500', 'label' => 'In Progress'],
-                    'ready'       => ['color' => 'bg-orange-500', 'text' => 'text-orange-500', 'label' => 'Ready'],
-                    'delivered'   => ['color' => 'bg-green-500',  'text' => 'text-green-500',  'label' => 'Delivered'],
-                    'cancelled'   => ['color' => 'bg-gray-400',   'text' => 'text-gray-400',   'label' => 'Cancelled'],
+                    'in_progress' => ['color' => 'bg-amber-500',   'text' => 'text-amber-500',   'label' => 'In Progress'],
+                    'ready'       => ['color' => 'bg-emerald-500', 'text' => 'text-emerald-500', 'label' => 'Ready'],
+                    'delivered'   => ['color' => 'bg-gray-400',    'text' => 'text-gray-400',    'label' => 'Delivered'],
+                    'cancelled'   => ['color' => 'bg-red-500',     'text' => 'text-red-500',     'label' => 'Cancelled'],
                 ];
             @endphp
 

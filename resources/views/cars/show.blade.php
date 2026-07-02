@@ -16,7 +16,7 @@
                 <div class="flex flex-wrap items-center gap-3">
                     <h1 class="text-3xl font-extrabold tracking-tight text-[var(--app-text)]">{{ $car->make }} {{ $car->model }}</h1>
                     <span class="inline-flex items-center gap-2 rounded-xl border border-[var(--app-border)] px-4 py-2 text-sm font-bold shadow-sm bg-[var(--app-surface)] text-[var(--app-text)]">
-                        🚗 <span class="font-black text-[var(--app-accent)]">{{ $car->plate_number }}</span>
+                        <span class="font-black text-[var(--app-accent)]">{{ $car->plate_number }}</span>
                     </span>
                 </div>
             </div>
@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <!-- strictly Horizontal 3-Column Profile Row (Forced Flex-Row side-by-side) -->
+
         <div class="flex flex-row gap-6 w-full mb-6">
 
             {{-- Vehicle Details Card --}}
@@ -51,7 +51,9 @@
                 {{-- Card Header --}}
                 <div class="flex items-center justify-between border-b border-[var(--app-border)] pb-3 mb-4">
                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-[var(--app-muted)]">Vehicle Details</h3>
-                    <span class="text-base">🚗</span>
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+                    </svg>
                 </div>
                 {{-- Full-width label/value rows --}}
                 <div class="flex flex-col gap-3 flex-1 justify-center">
@@ -79,7 +81,9 @@
                 {{-- Card Header --}}
                 <div class="flex items-center justify-between border-b border-[var(--app-border)] pb-3 mb-4">
                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-[var(--app-muted)]">Owner Details</h3>
-                    <span class="text-base">👤</span>
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
                 </div>
                 {{-- Full-width label/value rows --}}
                 <div class="flex flex-col gap-3 flex-1 justify-center">
@@ -93,11 +97,11 @@
                         </div>
                         <div class="flex items-center justify-between w-full py-1.5 border-b border-[var(--app-border)]/40">
                             <span class="text-xs font-extrabold uppercase tracking-wide text-[var(--app-muted)]">Phone</span>
-                            <span class="text-sm font-bold text-[var(--app-text)]">📞 {{ $car->customer->phone }}</span>
+                            <span class="text-sm font-bold text-[var(--app-text)]">{{ $car->customer->phone }}</span>
                         </div>
                         <div class="flex items-start justify-between w-full py-1.5">
                             <span class="text-xs font-extrabold uppercase tracking-wide text-[var(--app-muted)]">Address</span>
-                            <span class="text-sm font-bold text-[var(--app-text)] text-right max-w-[60%]">📍 {{ $car->customer->address }}</span>
+                            <span class="text-sm font-bold text-[var(--app-text)] text-right max-w-[60%]">{{ $car->customer->address }}</span>
                         </div>
                     @else
                         <div class="flex flex-1 items-center justify-center">
@@ -112,7 +116,9 @@
                 {{-- Card Header --}}
                 <div class="flex items-center justify-between border-b border-[var(--app-border)] pb-3 mb-4">
                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-[var(--app-muted)]">Shop Stats</h3>
-                    <span class="text-base">📊</span>
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
                 </div>
                 {{-- Full-width label/value rows --}}
                 <div class="flex flex-col gap-3 flex-1 justify-center">
@@ -130,7 +136,7 @@
         </div>
 
         {{-- Service History Card --}}
-        <section class="rounded-[2rem] border border-[var(--app-border)] bg-[var(--app-surface)] p-6 shadow-sm w-full">
+        <section class="rounded-3xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6 shadow-sm w-full">
             <div class="flex items-center justify-between gap-4 border-b border-[var(--app-border)] pb-4 mb-6">
                 <div>
                     <div class="text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--app-muted)]">Service History</div>

@@ -7,52 +7,38 @@
 @section('content')
     <div class="max-w-2xl mx-auto">
         <form action="{{ route('customers.store') }}" method="post"
-            class="space-y-5 rounded-[2rem] border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
+            class="space-y-5 rounded-3xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
             @csrf
             <div class="grid gap-5">
                 <div>
-                    <label for="name" class="block text-sm font-medium">Customer Name</label>
-                    <input id="name" name="name" value="{{ old('name') }}"
-                        placeholder="Full name"
-                        class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]"
-                        required>
-                    @error('name')
-                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
-                    @enderror
+                    <x-label for="name" value="Customer Name" />
+                    <x-input id="name" name="name" value="{{ old('name') }}" placeholder="Full name" required />
+                    <x-error :messages="$errors->get('name')" />
                 </div>
                 <div>
-                    <label for="phone" class="block text-sm font-medium">Phone Number</label>
-                    <input id="phone" name="phone" value="{{ old('phone') }}"
-                        placeholder="0300-0000000"
-                        class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]"
-                        required>
-                    @error('phone')
-                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
-                    @enderror
+                    <x-label for="phone" value="Phone Number" />
+                    <x-input id="phone" name="phone" value="{{ old('phone') }}" placeholder="0300-0000000" required />
+                    <x-error :messages="$errors->get('phone')" />
                 </div>
                 <div>
-                    <label for="address" class="block text-sm font-medium">Address</label>
+                    <x-label for="address" value="Address" />
                     <textarea id="address" name="address" placeholder="Street, area, city"
-                        class="mt-1 min-h-24 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]">{{ old('address') }}</textarea>
-                    @error('address')
-                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
-                    @enderror
+                        class="mt-1 min-h-24 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)] focus:ring-2 focus:ring-[var(--app-accent)]/20 transition shadow-sm">{{ old('address') }}</textarea>
+                    <x-error :messages="$errors->get('address')" />
                 </div>
                 <div>
-                    <label for="notes" class="block text-sm font-medium">Notes</label>
+                    <x-label for="notes" value="Notes" />
                     <textarea id="notes" name="notes" placeholder="Any special notes about this customer"
-                        class="mt-1 min-h-24 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]">{{ old('notes') }}</textarea>
-                    @error('notes')
-                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
-                    @enderror
+                        class="mt-1 min-h-24 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)] focus:ring-2 focus:ring-[var(--app-accent)]/20 transition shadow-sm">{{ old('notes') }}</textarea>
+                    <x-error :messages="$errors->get('notes')" />
                 </div>
             </div>
             <div class="flex items-center gap-3 pt-4">
                 <button type="submit"
-                    class="rounded-2xl bg-[var(--app-accent)] px-6 py-2 text-sm font-semibold text-white transition hover:opacity-90">Save
+                    class="rounded-2xl bg-[var(--app-accent)] px-6 py-2 text-sm font-semibold text-black transition hover:opacity-90">Save
                     Customer</button>
                 <a href="{{ route('customers.index') }}"
-                    class="text-sm font-medium text-[var(--app-muted)] transition hover:text-[var(--app-text)]">Cancel</a>
+                    class="inline-flex items-center rounded-xl border border-[var(--app-border)] px-6 py-2.5 text-sm font-medium text-[var(--app-text)] transition hover:border-[var(--app-accent)] hover:text-[var(--app-accent)]">Cancel</a>
             </div>
         </form>
     </div>

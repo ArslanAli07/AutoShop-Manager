@@ -1,3 +1,6 @@
+### resources/views/welcome.blade.php
+
+```blade
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -8,7 +11,7 @@
 
         @fonts
 
-
+        <!-- Styles / Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @else
@@ -221,3 +224,610 @@
         @endif
     </body>
 </html>
+
+```
+
+### resources/views/reports/layout.blade.php
+
+```blade
+@extends('layouts.app')
+
+@section('title', 'Reports & Analytics | AutoShop Manager')
+@section('meta_description', 'View business insights, revenue, outstanding payments, and job statuses.')
+@section('page_title', 'Reports & Analytics')
+
+@section('content')
+    <div class="max-w-6xl">
+        {{-- Reports Navigation & Filters --}}
+        <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            
+            {{-- Tabs --}}
+            <nav class="flex gap-2 overflow-x-auto pb-2 sm:pb-0" aria-label="Tabs">
+                <a href="{{ route('reports.revenue', request()->only('period')) }}"
+                    class="rounded-xl px-4 py-2 text-sm font-semibold transition
+                    {{ request()->routeIs('reports.revenue') ? 'bg-[var(--app-accent)] text-black' : 'text-[var(--app-muted)] hover:bg-[var(--app-surface)] hover:text-[var(--app-text)]' }}">
+                    Revenue
+                </a>
+                <a href="{{ route('reports.outstanding', request()->only('period')) }}"
+                    class="rounded-xl px-4 py-2 text-sm font-semibold transition
+                    {{ request()->routeIs('reports.outstanding') ? 'bg-[var(--app-accent)] text-black' : 'text-[var(--app-muted)] hover:bg-[var(--app-surface)] hover:text-[var(--app-text)]' }}">
+                    Outstanding
+                </a>
+                <a href="{{ route('reports.job_status', request()->only('period')) }}"
+                    class="rounded-xl px-4 py-2 text-sm font-semibold transition
+                    {{ request()->routeIs('reports.job_status') ? 'bg-[var(--app-accent)] text-black' : 'text-[var(--app-muted)] hover:bg-[var(--app-surface)] hover:text-[var(--app-text)]' }}">
+                    Job Status
+                </a>
+                <a href="{{ route('reports.services_parts', request()->only('period')) }}"
+                    class="rounded-xl px-4 py-2 text-sm font-semibold transition
+                    {{ request()->routeIs('reports.services_parts') ? 'bg-[var(--app-accent)] text-black' : 'text-[var(--app-muted)] hover:bg-[var(--app-surface)] hover:text-[var(--app-text)]' }}">
+                    Services & Parts
+                </a>
+            </nav>
+
+            {{-- Date Filter --}}
+            @if(!request()->routeIs('reports.outstanding'))
+                <form method="GET" class="flex items-center gap-2">
+                    <label for="period" class="text-sm text-[var(--app-muted)]">Timeframe:</label>
+                    <select name="period" id="period" onchange="this.form.submit()"
+                        class="rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] px-3 py-1.5 text-sm font-medium outline-none focus:border-[var(--app-accent)]">
+                        <option value="today" {{ (request('period') ?? 'month') === 'today' ? 'selected' : '' }}>Today</option>
+                        <option value="week" {{ (request('period') ?? 'month') === 'week' ? 'selected' : '' }}>This Week</option>
+                        <option value="month" {{ (request('period') ?? 'month') === 'month' ? 'selected' : '' }}>This Month</option>
+                        <option value="year" {{ (request('period') ?? 'month') === 'year' ? 'selected' : '' }}>This Year</option>
+                    </select>
+                </form>
+            @endif
+        </div>
+
+        {{-- Report Content --}}
+        <div class="mt-4">
+            @yield('report_content')
+        </div>
+    </div>
+@endsection
+
+```
+
+### resources/views/reports/job_status.blade.php
+
+```blade
+@extends('reports.layout')
+
+@section('report_content')
+    
+    <div class="mb-6">
+        <h2 class="text-xl font-bold text-[var(--app-text)]">Job Status Overview</h2>
+        <p class="text-sm text-[var(--app-muted)] mt-1">Snapshot of how many jobs are currently in each stage.</p>
+    </div>
+
+    {{-- Status Cards --}}
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+        
+        <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="flex h-3 w-3 rounded-full bg-blue-500"></span>
+                <h3 class="text-sm font-medium text-[var(--app-muted)]">Received</h3>
+            </div>
+            <p class="text-3xl font-bold text-[var(--app-text)]">{{ $statusCounts['received'] }}</p>
+        </div>
+
+        <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="flex h-3 w-3 rounded-full bg-yellow-500"></span>
+                <h3 class="text-sm font-medium text-[var(--app-muted)]">In Progress</h3>
+            </div>
+            <p class="text-3xl font-bold text-[var(--app-text)]">{{ $statusCounts['in_progress'] }}</p>
+        </div>
+
+        <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="flex h-3 w-3 rounded-full bg-orange-500"></span>
+                <h3 class="text-sm font-medium text-[var(--app-muted)]">Ready</h3>
+            </div>
+            <p class="text-3xl font-bold text-[var(--app-text)]">{{ $statusCounts['ready'] }}</p>
+        </div>
+
+        <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="flex h-3 w-3 rounded-full bg-green-500"></span>
+                <h3 class="text-sm font-medium text-[var(--app-muted)]">Delivered</h3>
+            </div>
+            <p class="text-3xl font-bold text-[var(--app-text)]">{{ $statusCounts['delivered'] }}</p>
+        </div>
+
+        <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="flex h-3 w-3 rounded-full bg-gray-500"></span>
+                <h3 class="text-sm font-medium text-[var(--app-muted)]">Cancelled</h3>
+            </div>
+            <p class="text-3xl font-bold text-[var(--app-text)]">{{ $statusCounts['cancelled'] }}</p>
+        </div>
+
+    </div>
+
+    {{-- Pipeline Visualization --}}
+    <div class="mt-8 rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6 w-full">
+        <div class="flex items-center justify-between mb-6 border-b border-[var(--app-border)] pb-4">
+            <h3 class="text-sm font-extrabold uppercase tracking-widest text-[var(--app-muted)]">Pipeline</h3>
+            <span class="text-xs font-bold text-[var(--app-muted)]">{{ array_sum($statusCounts) }} Total Jobs</span>
+        </div>
+
+        <div class="space-y-5 w-full">
+            @php
+                $max = max(1, array_sum($statusCounts));
+                $stages = [
+                    'received'    => ['color' => 'bg-blue-500',   'text' => 'text-blue-500',   'label' => 'Received'],
+                    'in_progress' => ['color' => 'bg-yellow-500', 'text' => 'text-yellow-500', 'label' => 'In Progress'],
+                    'ready'       => ['color' => 'bg-orange-500', 'text' => 'text-orange-500', 'label' => 'Ready'],
+                    'delivered'   => ['color' => 'bg-green-500',  'text' => 'text-green-500',  'label' => 'Delivered'],
+                    'cancelled'   => ['color' => 'bg-gray-400',   'text' => 'text-gray-400',   'label' => 'Cancelled'],
+                ];
+            @endphp
+
+            @foreach($stages as $status => $meta)
+                @php
+                    $count = $statusCounts[$status];
+                    $percentage = round(($count / $max) * 100);
+                @endphp
+                <div class="w-full">
+                    {{-- Label Row --}}
+                    <div class="flex items-center justify-between mb-2 w-full">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block h-2.5 w-2.5 rounded-full {{ $meta['color'] }}"></span>
+                            <span class="text-sm font-bold text-[var(--app-text)]">{{ $meta['label'] }}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="inline-flex min-w-[2rem] items-center justify-center rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-2.5 py-0.5 text-sm font-black text-[var(--app-text)]">{{ $count }}</span>
+                        </div>
+                    </div>
+                    {{-- Progress Bar --}}
+                    <div class="h-4 w-full rounded-full bg-[var(--app-bg)] overflow-hidden border border-[var(--app-border)]/40">
+                        <div class="h-4 rounded-full {{ $meta['color'] }} transition-all duration-700 opacity-85"
+                             style="width: {{ $percentage }}%"></div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+@endsection
+
+```
+
+### resources/views/reports/services_parts.blade.php
+
+```blade
+@extends('reports.layout')
+
+@section('report_content')
+    
+    <div class="grid gap-6 lg:grid-cols-2">
+        
+        {{-- Most Common Services --}}
+        <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] overflow-hidden flex flex-col">
+            <div class="p-6 border-b border-[var(--app-border)]">
+                <h3 class="text-sm font-bold text-[var(--app-text)]">Top Performed Services</h3>
+                <p class="mt-1 text-xs text-[var(--app-muted)]">Services completed most often in this period.</p>
+            </div>
+            <div class="overflow-x-auto flex-1">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="border-b border-[var(--app-border)] bg-[var(--app-bg)] text-[var(--app-muted)]">
+                            <th class="px-6 py-4 font-medium">Service Name</th>
+                            <th class="px-6 py-4 font-medium text-center">Times Performed</th>
+                            <th class="px-6 py-4 font-medium text-right">Revenue Generated</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[var(--app-border)] text-[var(--app-text)]">
+                        @forelse($services as $service)
+                            <tr class="transition hover:bg-[var(--app-bg)]">
+                                <td class="px-6 py-4 font-medium">{{ $service->name }}</td>
+                                <td class="px-6 py-4 text-center">{{ $service->count }}</td>
+                                <td class="px-6 py-4 text-right">Rs. {{ number_format($service->total_revenue) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="px-6 py-8 text-center text-[var(--app-muted)]">No services performed in this period.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{-- Most Used Parts --}}
+        <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] overflow-hidden flex flex-col">
+            <div class="p-6 border-b border-[var(--app-border)]">
+                <h3 class="text-sm font-bold text-[var(--app-text)]">Top Parts Used</h3>
+                <p class="mt-1 text-xs text-[var(--app-muted)]">Parts consumed most frequently in this period.</p>
+            </div>
+            <div class="overflow-x-auto flex-1">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="border-b border-[var(--app-border)] bg-[var(--app-bg)] text-[var(--app-muted)]">
+                            <th class="px-6 py-4 font-medium">Part Name</th>
+                            <th class="px-6 py-4 font-medium text-center">Quantity Used</th>
+                            <th class="px-6 py-4 font-medium text-right">Revenue Generated</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[var(--app-border)] text-[var(--app-text)]">
+                        @forelse($parts as $part)
+                            <tr class="transition hover:bg-[var(--app-bg)]">
+                                <td class="px-6 py-4 font-medium">{{ $part->name }}</td>
+                                <td class="px-6 py-4 text-center">{{ $part->total_quantity }}</td>
+                                <td class="px-6 py-4 text-right">Rs. {{ number_format($part->total_revenue) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="px-6 py-8 text-center text-[var(--app-muted)]">No parts used in this period.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+@endsection
+
+```
+
+### resources/views/customers/edit.blade.php
+
+```blade
+@extends('layouts.app')
+
+@section('title', 'Edit Customer: ' . $customer->name . ' | AutoShop Manager')
+@section('meta_description', 'Update customer information including contact details, address, and notes.')
+@section('page_title', 'Edit Customer')
+
+@section('content')
+    <div class="max-w-2xl mx-auto">
+        <form action="{{ route('customers.update', $customer) }}" method="post"
+            class="space-y-5 rounded-[2rem] border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
+            @csrf
+            @method('PUT')
+            <div class="grid gap-5">
+                <div>
+                    <label for="name" class="block text-sm font-medium">Customer Name</label>
+                    <input id="name" name="name" value="{{ old('name', $customer->name) }}"
+                        placeholder="Full name"
+                        class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]"
+                        required>
+                    @error('name')
+                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div>
+                    <label for="phone" class="block text-sm font-medium">Phone Number</label>
+                    <input id="phone" name="phone" value="{{ old('phone', $customer->phone) }}"
+                        placeholder="0300-0000000"
+                        class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]"
+                        required>
+                    @error('phone')
+                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div>
+                    <label for="address" class="block text-sm font-medium">Address</label>
+                    <textarea id="address" name="address" placeholder="Street, area, city"
+                        class="mt-1 min-h-24 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]">{{ old('address', $customer->address) }}</textarea>
+                    @error('address')
+                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div>
+                    <label for="notes" class="block text-sm font-medium">Notes</label>
+                    <textarea id="notes" name="notes" placeholder="Any special notes about this customer"
+                        class="mt-1 min-h-24 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]">{{ old('notes', $customer->notes) }}</textarea>
+                    @error('notes')
+                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+            <div class="flex items-center gap-3 pt-4">
+                <button type="submit"
+                    class="rounded-2xl bg-[var(--app-accent)] px-6 py-2 text-sm font-semibold text-black transition hover:opacity-90">Update
+                    Customer</button>
+                <a href="{{ route('customers.show', $customer) }}"
+                    class="inline-flex items-center rounded-xl border border-[var(--app-border)] px-6 py-2.5 text-sm font-medium text-[var(--app-text)] transition hover:border-[var(--app-accent)] hover:text-[var(--app-accent)]">Cancel</a>
+            </div>
+        </form>
+    </div>
+@endsection
+
+```
+
+### resources/views/cars/edit.blade.php
+
+```blade
+@extends('layouts.app')
+
+@section('title', 'Edit Car: ' . $car->plate_number . ' | AutoShop Manager')
+@section('meta_description', 'Update vehicle information including make, model, year, color, and owner details.')
+@section('page_title', 'Edit Car')
+
+@section('content')
+    <div class="max-w-2xl mx-auto">
+        <form action="{{ route('cars.update', $car) }}" method="post"
+            class="space-y-5 rounded-[2rem] border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
+            @csrf
+            @method('PUT')
+            <div class="grid gap-5">
+                <div>
+                    <label for="customer_id" class="block text-sm font-medium">Owner</label>
+                    <select id="customer_id" name="customer_id" style="color-scheme: dark;"
+                        class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] px-4 py-3 outline-none focus:border-[var(--app-accent)] text-[var(--app-text)]"
+                        required>
+                        @foreach ($customers as $cust)
+                            <option value="{{ $cust->id }}" class="bg-[var(--app-surface)] text-[var(--app-text)]" @selected(old('customer_id', $car->customer_id) == $cust->id)>
+                                {{ $cust->name }} — {{ $cust->phone }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('customer_id')
+                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div>
+                    <label for="plate_number" class="block text-sm font-medium">Plate Number</label>
+                    <input id="plate_number" name="plate_number" value="{{ old('plate_number', $car->plate_number) }}"
+                        placeholder="LEA-1234"
+                        class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]"
+                        required>
+                    @error('plate_number')
+                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="grid gap-3 sm:grid-cols-2">
+                    <div>
+                        <label for="make" class="block text-sm font-medium">Make</label>
+                        <input id="make" name="make" value="{{ old('make', $car->make) }}"
+                            placeholder="Toyota"
+                            class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]"
+                            required>
+                        @error('make')
+                            <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="model" class="block text-sm font-medium">Model</label>
+                        <input id="model" name="model" value="{{ old('model', $car->model) }}"
+                            placeholder="Corolla"
+                            class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]"
+                            required>
+                        @error('model')
+                            <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div>
+                    <label for="year" class="block text-sm font-medium">Year</label>
+                    <input id="year" name="year" value="{{ old('year', $car->year) }}"
+                        placeholder="2020"
+                        class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]"
+                        type="number" min="1900" max="2099">
+                    @error('year')
+                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div>
+                    <label for="color" class="block text-sm font-medium">Color</label>
+                    <input id="color" name="color" value="{{ old('color', $car->color) }}"
+                        placeholder="White"
+                        class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-transparent px-4 py-3 outline-none focus:border-[var(--app-accent)]">
+                    @error('color')
+                        <span class="mt-1 text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 pt-4">
+                <button type="submit"
+                    class="rounded-2xl bg-[var(--app-accent)] px-6 py-2 text-sm font-semibold text-black transition hover:opacity-90">Update
+                    Car</button>
+                <a href="{{ route('cars.show', $car) }}"
+                    class="inline-flex items-center rounded-xl border border-[var(--app-border)] px-6 py-2.5 text-sm font-medium text-[var(--app-text)] transition hover:border-[var(--app-accent)] hover:text-[var(--app-accent)]">Cancel</a>
+            </div>
+        </form>
+    </div>
+@endsection
+
+```
+
+### resources/views/presets/edit.blade.php
+
+```blade
+@extends('layouts.app')
+
+@section('page_title', 'Edit Service')
+
+@section('content')
+    <div class="max-w-3xl mx-auto space-y-6">
+        <div>
+            <h1 class="font-display text-3xl font-semibold">Edit Service Preset</h1>
+            <p class="mt-1 text-sm text-[var(--app-muted)]">Update service preset details</p>
+        </div>
+
+        <form action="{{ route('presets.update', $preset) }}" method="POST"
+            class="rounded-3xl border border-[var(--app-border)] bg-[var(--app-surface)] p-8 sm:p-10 space-y-8">
+            @csrf
+            @method('PUT')
+
+            <div class="grid gap-6">
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-[var(--app-text)]">Service Name (English)</label>
+                    <input type="text" name="name" required maxlength="100"
+                        class="w-full rounded-2xl border border-[var(--app-border)] bg-[var(--app-bg)] px-5 py-3 text-sm transition focus:border-[var(--app-accent)] focus:outline-none focus:ring-1 focus:ring-[var(--app-accent)]"
+                        placeholder="Oil Change" value="{{ old('name', $preset->name) }}">
+                    @error('name')
+                        <span class="text-xs text-red-600 mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2">
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-[var(--app-text)]">Category</label>
+                    <select name="category" required
+                        class="w-full rounded-2xl border border-[var(--app-border)] bg-[var(--app-bg)] px-5 py-3 text-sm transition focus:border-[var(--app-accent)] focus:outline-none focus:ring-1 focus:ring-[var(--app-accent)]">
+                        <option value="">Select Category</option>
+                        <option value="Maintenance"
+                            {{ old('category', $preset->category) === 'Maintenance' ? 'selected' : '' }}>Maintenance
+                        </option>
+                        <option value="Tires" {{ old('category', $preset->category) === 'Tires' ? 'selected' : '' }}>Tires
+                        </option>
+                        <option value="Suspension"
+                            {{ old('category', $preset->category) === 'Suspension' ? 'selected' : '' }}>Suspension</option>
+                        <option value="Brakes" {{ old('category', $preset->category) === 'Brakes' ? 'selected' : '' }}>
+                            Brakes</option>
+                        <option value="Electrical"
+                            {{ old('category', $preset->category) === 'Electrical' ? 'selected' : '' }}>Electrical</option>
+                        <option value="Engine" {{ old('category', $preset->category) === 'Engine' ? 'selected' : '' }}>
+                            Engine</option>
+                        <option value="Inspection"
+                            {{ old('category', $preset->category) === 'Inspection' ? 'selected' : '' }}>Inspection</option>
+                    </select>
+                    @error('category')
+                        <span class="text-xs text-red-600 mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-[var(--app-text)]">Default Labor Cost (Rs.)</label>
+                    <input type="number" name="default_labor_cost" required step="1" min="0"
+                        class="w-full rounded-2xl border border-[var(--app-border)] bg-[var(--app-bg)] px-5 py-3 text-sm transition focus:border-[var(--app-accent)] focus:outline-none focus:ring-1 focus:ring-[var(--app-accent)]"
+                        placeholder="2500" value="{{ old('default_labor_cost', $preset->default_labor_cost) }}">
+                    @error('default_labor_cost')
+                        <span class="text-xs text-red-600 mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="flex gap-4 pt-4 border-t border-[var(--app-border)]">
+                <button type="submit"
+                    class="rounded-xl bg-[var(--app-accent)] px-8 py-3 text-sm font-bold text-black transition hover:opacity-90">
+                    Update Service
+                </button>
+                <a href="{{ route('presets.index') }}"
+                    class="inline-flex items-center rounded-xl border border-[var(--app-border)] px-6 py-2.5 text-sm font-medium text-[var(--app-text)] transition hover:border-[var(--app-accent)] hover:text-[var(--app-accent)]">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+@endsection
+
+```
+
+### resources/views/parts/edit.blade.php
+
+```blade
+@extends('layouts.app')
+
+@section('page_title', 'Edit Part')
+
+@section('content')
+    <div class="max-w-3xl mx-auto space-y-6">
+        <div>
+            <h1 class="font-display text-3xl font-semibold">Edit Part</h1>
+            <p class="mt-1 text-sm text-[var(--app-muted)]">Update part reference details</p>
+        </div>
+
+        <form action="{{ route('parts.update', $part) }}" method="POST"
+            class="rounded-3xl border border-[var(--app-border)] bg-[var(--app-surface)] p-8 sm:p-10 space-y-8">
+            @csrf
+            @method('PUT')
+
+            <div class="grid gap-6 sm:grid-cols-2">
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-[var(--app-text)]">Part Name</label>
+                    <input type="text" name="name" required maxlength="100"
+                        class="w-full rounded-2xl border border-[var(--app-border)] bg-[var(--app-bg)] px-5 py-3 text-sm transition focus:border-[var(--app-accent)] focus:outline-none focus:ring-1 focus:ring-[var(--app-accent)]"
+                        placeholder="Oil Filter" value="{{ old('name', $part->name) }}">
+                    @error('name')
+                        <span class="text-xs text-red-600 mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-[var(--app-text)]">Part Number</label>
+                    <input type="text" name="part_number" maxlength="50"
+                        class="w-full rounded-2xl border border-[var(--app-border)] bg-[var(--app-bg)] px-5 py-3 text-sm transition focus:border-[var(--app-accent)] focus:outline-none focus:ring-1 focus:ring-[var(--app-accent)]"
+                        placeholder="OIL-FILTER-001" value="{{ old('part_number', $part->part_number) }}">
+                    @error('part_number')
+                        <span class="text-xs text-red-600 mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2">
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-[var(--app-text)]">Default Price (Rs.)</label>
+                    <input type="number" name="default_price" required step="1" min="0"
+                        class="w-full rounded-2xl border border-[var(--app-border)] bg-[var(--app-bg)] px-5 py-3 text-sm transition focus:border-[var(--app-accent)] focus:outline-none focus:ring-1 focus:ring-[var(--app-accent)]"
+                        placeholder="1500" value="{{ old('default_price', $part->default_price) }}">
+                    @error('default_price')
+                        <span class="text-xs text-red-600 mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-[var(--app-text)] invisible">Options</label>
+                    <div class="flex items-center h-[46px]">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="needs_reorder" value="1"
+                                class="h-5 w-5 rounded border border-[var(--app-border)] bg-[var(--app-bg)] text-[var(--app-accent)] transition focus:ring-1 focus:ring-[var(--app-accent)] focus:ring-offset-0"
+                                {{ old('needs_reorder', $part->needs_reorder) ? 'checked' : '' }}>
+                            <span class="text-sm font-medium text-[var(--app-text)] group-hover:text-[var(--app-accent)] transition">Needs Reorder</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4 pt-4 border-t border-[var(--app-border)]">
+                <button type="submit"
+                    class="rounded-xl bg-[var(--app-accent)] px-8 py-3 text-sm font-bold text-black transition hover:opacity-90">
+                    Update Part
+                </button>
+                <a href="{{ route('parts.index') }}"
+                    class="inline-flex items-center rounded-xl border border-[var(--app-border)] px-6 py-2.5 text-sm font-medium text-[var(--app-text)] transition hover:border-[var(--app-accent)] hover:text-[var(--app-accent)]">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+@endsection
+
+```
+
+### Border Radius Classes
+
+- `rounded-2xl`: 105
+- `rounded-xl`: 58
+- `rounded-lg`: 30
+- `rounded-full`: 27
+- `rounded`: 20
+- `rounded-[2rem`: 11
+- `rounded-3xl`: 9
+- `rounded-sm`: 5
+- `rounded-t-lg`: 3
+- `rounded-t-none`: 3
+- `rounded-r-lg`: 3
+- `rounded-br-lg`: 2
+- `rounded-bl-lg`: 2
+- `rounded-tl-lg`: 2
+- `rounded-br-none`: 2
+- `rounded-md`: 1
+- `rounded-l-md`: 1
+- `rounded-r-md`: 1
+
+### Font Weight Classes
+
+- `font-medium`: 142
+- `font-semibold`: 136
+- `font-bold`: 96
+- `font-extrabold`: 78
+- `font-black`: 22

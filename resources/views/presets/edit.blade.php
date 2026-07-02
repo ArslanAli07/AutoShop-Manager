@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page_title', 'Edit Service')
+
 @section('content')
     <div class="max-w-3xl mx-auto space-y-6">
         <div>
@@ -68,7 +70,7 @@
                     Update Service
                 </button>
                 <a href="{{ route('presets.index') }}"
-                    class="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] px-8 py-3 text-sm font-semibold text-[var(--app-text)] transition hover:border-[var(--app-accent)] hover:text-[var(--app-accent)]">
+                    class="inline-flex items-center rounded-xl border border-[var(--app-border)] px-6 py-2.5 text-sm font-medium text-[var(--app-text)] transition hover:border-[var(--app-accent)] hover:text-[var(--app-accent)]">
                     Cancel
                 </a>
             </div>

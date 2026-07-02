@@ -16,7 +16,12 @@
         }
     @endphp
 
-    <section aria-label="Create new job card" class="max-w-4xl mx-auto">
+    <section aria-label="Create new job card" class="max-w-4xl mx-auto pb-10" x-data="jobForm(
+        @js($cars->groupBy('customer_id')), 
+        @js($servicePresets->keyBy('id')), 
+        @js($partReferences->keyBy('id')), 
+        '{{ $preselectedCarId }}'
+    )">
         <div class="mb-6">
             <h1 class="text-3xl font-semibold text-[var(--app-text)]">New Job Card</h1>
             <p class="mt-1 text-sm text-[var(--app-muted)]">Create a new service job with customer, vehicle, services, and
@@ -26,41 +31,35 @@
         <form method="POST" action="{{ route('jobs.store') }}" class="space-y-6">
             @csrf
 
-            <!-- Customer & Vehicle Selection -->
+
             <div class="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
                 <h2 class="mb-4 text-lg font-semibold text-[var(--app-text)]">Customer & Vehicle</h2>
 
                 <div class="grid gap-4 lg:grid-cols-2">
                     <div>
-                        <label for="customer_id" class="block text-sm font-medium text-[var(--app-text)]">
-                            Customer *
-                        </label>
-                        <select id="customer_id" name="customer_id" required style="color-scheme: dark;"
-                            class="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)] focus:border-[var(--app-accent)] focus:outline-none"
-                            onchange="updateCars()">
-                            <option value="">Select customer owner...</option>
+                        <x-label for="customer_id" value="Customer" />
+                        <select id="customer_id" name="customer_id" required x-model="customerId" @change="updateCars()"
+                            class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] px-4 py-3 outline-none focus:border-[var(--app-accent)] focus:ring-2 focus:ring-[var(--app-accent)]/20 shadow-sm transition">
+                            <option value="">Select a customer...</option>
                             @foreach ($customers as $customer)
-                                <option value="{{ $customer->id }}" @selected($preselectedCustomerId == $customer->id)>
+                                <option value="{{ $customer->id }}" {{ old('customer_id', $preselectedCustomerId) == $customer->id ? 'selected' : '' }}>
                                     {{ $customer->name }} ({{ $customer->phone }})
                                 </option>
                             @endforeach
                         </select>
-                        @error('customer_id')
-                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                        @enderror
+                        <x-error :messages="$errors->get('customer_id')" />
                     </div>
- 
+
                     <div>
-                        <label for="car_id" class="block text-sm font-medium text-[var(--app-text)]">
-                            Vehicle *
-                        </label>
-                        <select id="car_id" name="car_id" required style="color-scheme: dark;"
-                            class="mt-1 w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)] focus:border-[var(--app-accent)] focus:outline-none">
+                        <x-label for="car_id" value="Vehicle" />
+                        <select id="car_id" name="car_id" required x-model="carId"
+                            class="mt-1 w-full rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] px-4 py-3 outline-none focus:border-[var(--app-accent)] focus:ring-2 focus:ring-[var(--app-accent)]/20 shadow-sm transition">
                             <option value="">Select vehicle...</option>
+                            <template x-for="car in availableCars" :key="car.id">
+                                <option :value="car.id" x-text="`${car.plate_number} - ${car.make} ${car.model}`"></option>
+                            </template>
                         </select>
-                        @error('car_id')
-                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                        @enderror
+                        <x-error :messages="$errors->get('car_id')" />
                     </div>
                 </div>
 
@@ -91,17 +90,40 @@
                 </div>
             </div>
 
-            <!-- Services -->
+
             <div class="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold text-[var(--app-text)]">Services</h2>
-                    <button type="button" onclick="addService()" class="text-sm text-[var(--app-accent)] hover:underline">
+                    <h2 class="text-lg font-semibold text-[var(--app-text)]">Services / Labor</h2>
+                    <button type="button" @click="addService()" class="text-sm font-bold text-[var(--app-accent)] hover:opacity-80 transition">
                         + Add Service
                     </button>
                 </div>
 
-                <div id="services-container" class="space-y-3">
-                    <!-- Services will be added here -->
+                <div class="space-y-4">
+                    <template x-for="(service, index) in services" :key="service.id">
+                        <div class="flex gap-2 items-end">
+                            <div class="flex-1">
+                                <x-label class="mb-1 text-xs" value="Service or Preset" />
+                                <select :name="`services[${index}][service_preset_id]`" x-model="service.preset_id" @change="updateService(index)" class="w-full rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] px-4 py-2.5 outline-none focus:border-[var(--app-accent)]">
+                                    <option value="">Select or enter custom</option>
+                                    <template x-for="(preset, id) in servicePresets" :key="id">
+                                        <option :value="id" x-text="`${preset.name} - Rs. ${preset.default_labor_cost}`"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <x-label class="mb-1 text-xs" value="Description" />
+                                <x-input :name="`services[${index}][description]`" x-model="service.desc" placeholder="Notes..." class="py-2.5" />
+                            </div>
+                            <div class="w-32">
+                                <x-label class="mb-1 text-xs" value="Labor Cost" />
+                                <x-input type="number" :name="`services[${index}][labor_cost]`" x-model="service.cost" required class="py-2.5" />
+                            </div>
+                            <button type="button" @click="removeService(index)" class="px-2 py-3 text-red-500 hover:text-red-700 transition">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                    </template>
                 </div>
 
                 @error('services')
@@ -109,17 +131,40 @@
                 @enderror
             </div>
 
-            <!-- Parts -->
+
             <div class="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-semibold text-[var(--app-text)]">Parts</h2>
-                    <button type="button" onclick="addPart()" class="text-sm text-[var(--app-accent)] hover:underline">
+                    <button type="button" @click="addPart()" class="text-sm font-bold text-[var(--app-accent)] hover:opacity-80 transition">
                         + Add Part
                     </button>
                 </div>
 
-                <div id="parts-container" class="space-y-3">
-                    <!-- Parts will be added here -->
+                <div class="space-y-4">
+                    <template x-for="(part, index) in parts" :key="part.id">
+                        <div class="flex gap-2 items-end">
+                            <div class="w-3/5">
+                                <x-label class="mb-1 text-xs" value="Part or Reference" />
+                                <select :name="`parts[${index}][parts_reference_id]`" x-model="part.ref_id" @change="updatePart(index)" class="w-full rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] px-4 py-2.5 outline-none focus:border-[var(--app-accent)]">
+                                    <option value="">Select or enter custom</option>
+                                    <template x-for="(ref, id) in partsReference" :key="id">
+                                        <option :value="id" x-text="`${ref.name} - Rs. ${ref.default_price}`"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div class="w-20">
+                                <x-label class="mb-1 text-xs" value="Qty" />
+                                <x-input type="number" :name="`parts[${index}][quantity]`" x-model="part.qty" min="1" required class="py-2.5" />
+                            </div>
+                            <div class="flex-1">
+                                <x-label class="mb-1 text-xs" value="Unit Price" />
+                                <x-input type="number" :name="`parts[${index}][unit_price]`" x-model="part.price" min="0" required class="py-2.5" />
+                            </div>
+                            <button type="button" @click="removePart(index)" class="px-2 py-3 text-red-500 hover:text-red-700 transition">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                    </template>
                 </div>
 
                 @error('parts')
@@ -127,7 +172,7 @@
                 @enderror
             </div>
 
-            <!-- Notes -->
+
             <div class="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
                 <label for="notes" class="block text-sm font-medium text-[var(--app-text)]">
                     Notes
@@ -139,7 +184,7 @@
                 @enderror
             </div>
 
-            <!-- Actions -->
+
             <div class="flex gap-3 pt-4">
                 <button type="submit"
                     class="rounded-lg bg-[var(--app-accent)] px-6 py-2 font-semibold text-black transition hover:opacity-90">
@@ -153,142 +198,61 @@
         </form>
     </section>
 
-    <!-- Service Presets Data (for JavaScript) -->
-    <script type="application/json" id="service-presets-data">
-        {!! json_encode($servicePresets->mapWithKeys(fn($p) => [$p->id => ['name' => $p->name, 'default_labor_cost' => $p->default_labor_cost]])) !!}
-    </script>
-
-    <!-- Parts Reference Data (for JavaScript) -->
-    <script type="application/json" id="parts-reference-data">
-        {!! json_encode($partReferences->mapWithKeys(fn($p) => [$p->id => ['name' => $p->name, 'default_price' => $p->default_price, 'part_number' => $p->part_number]])) !!}
-    </script>
-
-    <!-- Cars Data (for JavaScript) -->
-    <script type="application/json" id="cars-data">
-        {!! json_encode($customers->mapWithKeys(fn($c) => [$c->id => $c->cars->map(fn($car) => ['id' => $car->id, 'plate_number' => $car->plate_number, 'make' => $car->make, 'model' => $car->model])->toArray()])) !!}
-    </script>
-
     <script>
-        const servicePresets = JSON.parse(document.getElementById('service-presets-data').textContent);
-        const partsReference = JSON.parse(document.getElementById('parts-reference-data').textContent);
-        const carsData = JSON.parse(document.getElementById('cars-data').textContent);
-        let serviceCount = 0;
-        let partCount = 0;
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('jobForm', (carsData, servicePresets, partsReference, preselectedCarId) => ({
+                customerId: '{{ old('customer_id', $preselectedCustomerId) }}',
+                carId: '{{ old('car_id', $preselectedCarId) }}',
+                availableCars: [],
+                services: [],
+                parts: [],
+                carsData,
+                servicePresets,
+                partsReference,
 
-        function updateCars() {
-            const customerId = document.getElementById('customer_id').value;
-            const carSelect = document.getElementById('car_id');
-            carSelect.innerHTML = '<option value="">Select vehicle...</option>';
+                init() {
+                    if (this.customerId) {
+                        this.updateCars();
+                        if (preselectedCarId) {
+                            this.carId = preselectedCarId;
+                        } else if (this.availableCars.length === 1) {
+                            this.carId = this.availableCars[0].id;
+                        }
+                    }
+                },
 
-            if (customerId && carsData[customerId]) {
-                carsData[customerId].forEach(car => {
-                    const option = document.createElement('option');
-                    option.value = car.id;
-                    option.textContent = `${car.plate_number} - ${car.make} ${car.model}`;
-                    carSelect.appendChild(option);
-                });
-            }
-        }
+                updateCars() {
+                    this.availableCars = this.customerId && this.carsData[this.customerId] 
+                        ? this.carsData[this.customerId] 
+                        : [];
+                    // Reset carId if the selected car is no longer available
+                    if (!this.availableCars.find(c => c.id == this.carId)) {
+                        this.carId = '';
+                    }
+                },
 
-        // Auto-run on page load for pre-filled customers
-        document.addEventListener('DOMContentLoaded', () => {
-            const customerSelect = document.getElementById('customer_id');
-            if (customerSelect && customerSelect.value) {
-                updateCars();
-                
-                // Read car_id from URL, Old input, or preselected PHP variable
-                const urlParams = new URLSearchParams(window.location.search);
-                const preselectedCarId = urlParams.get('car') || urlParams.get('car_id') || "{{ $preselectedCarId }}";
-                
-                const carSelect = document.getElementById('car_id');
-                if (preselectedCarId && carSelect.querySelector(`option[value="${preselectedCarId}"]`)) {
-                    carSelect.value = preselectedCarId;
-                } else if (carSelect.options.length === 2) {
-                    // Auto-select if customer has exactly one car (length is 2: index 0 is placeholder, index 1 is car)
-                    carSelect.selectedIndex = 1;
+                addService() {
+                    this.services.push({ id: Date.now(), preset_id: '', desc: '', cost: 0 });
+                },
+                removeService(index) {
+                    this.services.splice(index, 1);
+                },
+                updateService(index) {
+                    const preset = this.servicePresets[this.services[index].preset_id];
+                    if (preset) this.services[index].cost = preset.default_labor_cost;
+                },
+
+                addPart() {
+                    this.parts.push({ id: Date.now(), ref_id: '', qty: 1, price: 0 });
+                },
+                removePart(index) {
+                    this.parts.splice(index, 1);
+                },
+                updatePart(index) {
+                    const ref = this.partsReference[this.parts[index].ref_id];
+                    if (ref) this.parts[index].price = ref.default_price;
                 }
-            }
+            }));
         });
-
-        function addService() {
-            const container = document.getElementById('services-container');
-            const index = serviceCount++;
-            const html = `
-                <div class="service-row flex gap-2 items-end" id="service-${index}">
-                    <div class="flex-1">
-                        <label class="block text-xs font-medium text-[var(--app-muted)] mb-1">Service or Preset</label>
-                        <select name="services[${index}][service_preset_id]" class="w-full rounded border border-[var(--app-border)] bg-[var(--app-bg)] px-2 py-1 text-sm text-[var(--app-text)] focus:border-[var(--app-accent)] focus:outline-none" onchange="fillServiceDetails(${index})">
-                            <option value="">Select or enter custom</option>
-                            ${Object.entries(servicePresets).map(([id, preset]) => `<option value="${id}">${preset.name} - Rs. ${preset.default_labor_cost}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-xs font-medium text-[var(--app-muted)] mb-1">Description</label>
-                        <input type="text" name="services[${index}][description]" placeholder="Description or notes" class="w-full rounded border border-[var(--app-border)] bg-[var(--app-bg)] px-2 py-1 text-sm text-[var(--app-text)] placeholder-[var(--app-muted)] focus:border-[var(--app-accent)] focus:outline-none" />
-                    </div>
-                    <div class="w-24">
-                        <label class="block text-xs font-medium text-[var(--app-muted)] mb-1">Labor Cost</label>
-                        <input type="number" name="services[${index}][labor_cost]" min="0" step="1" placeholder="2500" value="0" required class="w-full rounded border border-[var(--app-border)] bg-[var(--app-bg)] px-2 py-1 text-sm text-[var(--app-text)] focus:border-[var(--app-accent)] focus:outline-none" />
-                    </div>
-                    <button type="button" onclick="removeService(${index})" class="px-2 py-1 text-red-500 hover:text-red-700 transition">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
-        }
-
-        function fillServiceDetails(index) {
-            const select = document.querySelector(`[name="services[${index}][service_preset_id]"]`);
-            const presetId = select.value;
-            if (presetId && servicePresets[presetId]) {
-                document.querySelector(`[name="services[${index}][labor_cost]"]`).value = servicePresets[presetId]
-                    .default_labor_cost;
-            }
-        }
-
-        function removeService(index) {
-            document.getElementById(`service-${index}`).remove();
-        }
-
-        function addPart() {
-            const container = document.getElementById('parts-container');
-            const index = partCount++;
-            const html = `
-                <div class="part-row flex gap-2 items-end" id="part-${index}">
-                    <div class="flex-1">
-                        <label class="block text-xs font-medium text-[var(--app-muted)] mb-1">Part or Reference</label>
-                        <select name="parts[${index}][parts_reference_id]" class="w-full rounded border border-[var(--app-border)] bg-[var(--app-bg)] px-2 py-1 text-sm text-[var(--app-text)] focus:border-[var(--app-accent)] focus:outline-none" onchange="fillPartDetails(${index})">
-                            <option value="">Select or enter custom</option>
-                            ${Object.entries(partsReference).map(([id, part]) => `<option value="${id}">${part.name} (${part.part_number || 'N/A'}) - Rs. ${part.default_price}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="w-24">
-                        <label class="block text-xs font-medium text-[var(--app-muted)] mb-1">Qty</label>
-                        <input type="number" name="parts[${index}][quantity]" min="1" step="1" placeholder="1" value="1" required class="w-full rounded border border-[var(--app-border)] bg-[var(--app-bg)] px-2 py-1 text-sm text-[var(--app-text)] focus:border-[var(--app-accent)] focus:outline-none" />
-                    </div>
-                    <div class="w-28">
-                        <label class="block text-xs font-medium text-[var(--app-muted)] mb-1">Unit Price</label>
-                        <input type="number" name="parts[${index}][unit_price]" min="0" step="1" placeholder="1500" value="0" required class="w-full rounded border border-[var(--app-border)] bg-[var(--app-bg)] px-2 py-1 text-sm text-[var(--app-text)] focus:border-[var(--app-accent)] focus:outline-none" />
-                    </div>
-                    <button type="button" onclick="removePart(${index})" class="px-2 py-1 text-red-500 hover:text-red-700 transition">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
-        }
-
-        function fillPartDetails(index) {
-            const select = document.querySelector(`[name="parts[${index}][parts_reference_id]"]`);
-            const partId = select.value;
-            if (partId && partsReference[partId]) {
-                document.querySelector(`[name="parts[${index}][unit_price]"]`).value = partsReference[partId].default_price;
-            }
-        }
-
-        function removePart(index) {
-            document.getElementById(`part-${index}`).remove();
-        }
     </script>
 @endsection

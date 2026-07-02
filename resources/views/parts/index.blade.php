@@ -37,13 +37,13 @@
                             <td class="px-6 py-4 text-sm">Rs. {{ number_format($part->default_price) }}</td>
                             <td class="px-6 py-4">
                                 @if ($part->needs_reorder)
-                                    <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--app-border)] bg-[var(--app-bg)] px-2.5 py-1 text-xs font-semibold text-[var(--app-text)]">
-                                        <span class="h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0"></span>
+                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-500">
+                                        <span class="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red-400"></span>
                                         Reorder
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--app-border)] bg-[var(--app-bg)] px-2.5 py-1 text-xs font-semibold text-[var(--app-text)]">
-                                        <span class="h-1.5 w-1.5 rounded-full bg-green-500 flex-shrink-0"></span>
+                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-500">
+                                        <span class="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-400"></span>
                                         In Stock
                                     </span>
                                 @endif

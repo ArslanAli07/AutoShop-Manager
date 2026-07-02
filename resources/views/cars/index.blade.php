@@ -59,7 +59,18 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-12 text-center text-sm text-[var(--app-muted)]">No cars found.</td>
+                                <td colspan="5" class="px-6 py-16 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-[var(--app-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                    </svg>
+                                    <h3 class="mt-2 font-medium text-[var(--app-text)]">No cars found</h3>
+                                    <p class="mt-1 text-sm text-[var(--app-muted)]">Get started by adding a new vehicle to the system.</p>
+                                    <div class="mt-6">
+                                        <a href="{{ route('cars.create') }}" class="inline-flex items-center gap-2 rounded-2xl bg-[var(--app-accent)] px-5 py-2.5 text-sm font-bold text-black transition hover:opacity-90 shadow-sm hover:shadow">
+                                            + Add Vehicle
+                                        </a>
+                                    </div>
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>

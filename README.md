@@ -1,6 +1,6 @@
-# AutoShop Manager — Arslan's Workshop
+# AutoShop Manager - Arslan's Workshop
 
-AutoShop Manager is a modern, comprehensive web application built with **Laravel 13** to manage daily operations for an auto repair workshop. It features a clean, card-based UI (powered by Tailwind CSS) and allows shop owners to easily track customers, vehicles, job cards, parts inventory, and service presets.
+AutoShop Manager is a modern, comprehensive web application built with **Laravel 11** to manage daily operations for an auto repair workshop. It features a clean, card-based UI (powered by Tailwind CSS and Alpine.js) and allows shop owners to easily track customers, vehicles, job cards, parts inventory, and service presets.
 
 ## 🚀 Features
 
@@ -11,16 +11,16 @@ AutoShop Manager is a modern, comprehensive web application built with **Laravel
 - **Parts Inventory Management:** Maintain a catalog of auto parts with stock levels, cost, selling price, and a "needs reorder" tracking system.
 - **Service Presets:** Predefined common services (e.g., Oil Change, Brake Pad Replacement) with default labor costs for quick job card creation.
 - **Analytics & Reports:** Detailed reports on revenue, outstanding payments, and job status distribution.
-- **Modern UI/UX:** Fully responsive design with Light/Dark mode support, global uppercase typography for readability, and an intuitive card-based layout.
+- **Modern UI/UX:** Fully responsive design with Light/Dark mode support, unified Blade components, and declarative interactivity with Alpine.js.
 
 ## 🛠️ Tech Stack
 
-- **Backend:** Laravel 13 (PHP)
+- **Backend:** Laravel 11 (PHP)
 - **Database:** SQLite (default for easy setup, configurable to MySQL/PostgreSQL)
-- **Frontend:** Laravel Blade, Tailwind CSS v4, Vanilla JavaScript
-- **Icons:** SVG-based inline icons
+- **Frontend:** Laravel Blade, Tailwind CSS v4, Alpine.js
+- **Icons:** SVG-based inline icons (Blade UI Kit compatible structure)
 
-## 💻 Installation & Setup
+## 📦 Installation & Setup
 
 Follow these steps to set up the project locally for development or testing:
 
@@ -46,7 +46,7 @@ Follow these steps to set up the project locally for development or testing:
    cp .env.example .env
    php artisan key:generate
    ```
-   *(By default, Laravel 13 uses SQLite. Ensure you have the SQLite extension enabled in your PHP configuration.)*
+   *(By default, Laravel 11 uses SQLite. Ensure you have the SQLite extension enabled in your PHP configuration.)*
 
 5. **Run Migrations & Seeders**
    This will create the database structure and populate it with initial service presets and parts reference data:
@@ -76,4 +76,6 @@ Once the app is running, you can test the workflow:
 4. **Manage the Job:** Inside the Job Card, add services (from your seeded presets) and parts. Update the job status to see it reflect on the Dashboard pipeline.
 5. **Print Receipt:** Once the job is complete, click *Print Receipt* on the Job Card to view the print-friendly invoice layout.
 
+## 📄 License
 
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

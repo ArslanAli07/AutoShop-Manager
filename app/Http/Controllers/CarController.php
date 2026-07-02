@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\Models\Customer;
+use App\Http\Requests\StoreCarRequest;
+use App\Http\Requests\UpdateCarRequest;
 use Illuminate\Http\Request;
 
 class CarController extends Controller
@@ -38,17 +40,9 @@ class CarController extends Controller
         return view('cars.create', compact('customers'));
     }
 
-    public function store(Request $request)
+    public function store(StoreCarRequest $request)
     {
-        $data = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'plate_number' => 'required|string|max:20',
-            'make' => 'required|string|max:50',
-            'model' => 'required|string|max:50',
-            'year' => 'nullable|digits:4',
-            'color' => 'nullable|string|max:30',
-            'notes' => 'nullable|string',
-        ]);
+        $data = $request->validated();
 
         $car = Car::create($data);
 
@@ -84,17 +78,9 @@ class CarController extends Controller
         return view('cars.edit', compact('car', 'customers'));
     }
 
-    public function update(Request $request, Car $car)
+    public function update(UpdateCarRequest $request, Car $car)
     {
-        $data = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'plate_number' => 'required|string|max:20',
-            'make' => 'required|string|max:50',
-            'model' => 'required|string|max:50',
-            'year' => 'nullable|digits:4',
-            'color' => 'nullable|string|max:30',
-            'notes' => 'nullable|string',
-        ]);
+        $data = $request->validated();
 
         $car->update($data);
 

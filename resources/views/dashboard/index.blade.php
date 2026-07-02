@@ -27,7 +27,9 @@
                 </a>
                 <a href="{{ route('intake.create') }}" id="btn-quick-intake"
                     class="inline-flex items-center gap-2 rounded-xl border border-[var(--app-accent)]/35 bg-[color:color-mix(in_srgb,var(--app-accent)_8%,var(--app-surface))] px-5 py-2.5 text-sm font-bold text-[var(--app-accent)] shadow-sm transition hover:border-[var(--app-accent)] hover:bg-[color:color-mix(in_srgb,var(--app-accent)_12%,var(--app-surface))]">
-                    <span aria-hidden="true">⚡</span>
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
                     Quick Intake
                 </a>
                 <a href="{{ route('jobs.create') }}" id="btn-new-job"
@@ -175,18 +177,7 @@
                                             {{ $job->car?->model }}</p>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span
-                                            class="inline-block rounded-full px-3 py-1 text-xs font-semibold
-                                    @if ($job->status === 'received') bg-blue-500/15 text-blue-400
-                                    @elseif($job->status === 'in_progress') bg-amber-500/15 text-amber-400
-                                    @elseif($job->status === 'ready') bg-emerald-500/15 text-emerald-400
-                                    @else bg-gray-500/15 text-gray-400 @endif">
-                                            @if ($job->status === 'received') Car Received
-                                            @elseif ($job->status === 'in_progress') Repairing
-                                            @elseif ($job->status === 'ready') Ready for Pickup
-                                            @elseif ($job->status === 'delivered') Delivered
-                                            @else Cancelled @endif
-                                        </span>
+                                        <x-status-badge :status="$job->status" />
                                     </td>
                                 </tr>
                             @endforeach
@@ -303,19 +294,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-[var(--app-muted)]">{{ $job->date_in?->format('d M Y') }}</td>
                                 <td class="px-6 py-4">
-                                    <span
-                                        class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold
-                                @if ($job->payment_status === 'paid') bg-emerald-500/15 text-emerald-400
-                                @elseif($job->payment_status === 'partial') bg-amber-500/15 text-amber-400
-                                @else bg-red-500/15 text-red-400 @endif">
-                                        <span
-                                            class="h-1.5 w-1.5 rounded-full
-                                    @if ($job->payment_status === 'paid') bg-emerald-400
-                                    @elseif($job->payment_status === 'partial') bg-amber-400
-                                    @else bg-red-400 @endif">
-                                        </span>
-                                        {{ ucfirst($job->payment_status) }}
-                                    </span>
+                                    <x-payment-badge :status="$job->payment_status" />
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-3">

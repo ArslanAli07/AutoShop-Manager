@@ -2,6 +2,7 @@
 
 @section('title', 'Job Cards | AutoShop Manager')
 @section('meta_description', 'Manage service job cards, track status, and manage payments.')
+@section('page_title', 'Job Cards')
 
 @section('content')
         {{-- Toolbar --}}
@@ -112,7 +113,7 @@
             </form>
         </div>
 
-        <!-- Jobs Table -->
+
         <div class="rounded-3xl border border-[var(--app-border)] bg-[var(--app-surface)] overflow-hidden">
             @forelse($jobs as $job)
                 @if ($loop->first)
@@ -210,32 +211,10 @@
                         Rs. {{ number_format($grandTotal, 0) }}
                     </td>
                     <td class="px-6 py-4 text-center">
-                        <span
-                            class="inline-flex items-center gap-1.5 rounded-full border border-[var(--app-border)] bg-[var(--app-bg)] px-2.5 py-1 text-xs font-semibold text-[var(--app-text)]">
-                            <span
-                                class="h-1.5 w-1.5 rounded-full flex-shrink-0 
-                                @if ($job->status === 'received') bg-blue-500
-                                @elseif ($job->status === 'in_progress') bg-yellow-500
-                                @elseif ($job->status === 'ready') bg-green-500
-                                @elseif ($job->status === 'delivered') bg-gray-400
-                                @else bg-red-500 @endif"></span>
-                            @if ($job->status === 'received') Car Received
-                            @elseif ($job->status === 'in_progress') Repairing
-                            @elseif ($job->status === 'ready') Ready for Pickup
-                            @elseif ($job->status === 'delivered') Delivered
-                            @else Cancelled @endif
-                        </span>
+                        <x-status-badge :status="$job->status" />
                     </td>
                     <td class="px-6 py-4 text-center">
-                        <span
-                            class="inline-flex items-center gap-1.5 rounded-full border border-[var(--app-border)] bg-[var(--app-bg)] px-2.5 py-1 text-xs font-semibold text-[var(--app-text)]">
-                            <span
-                                class="h-1.5 w-1.5 rounded-full flex-shrink-0 
-                                @if ($job->payment_status === 'paid') bg-green-500
-                                @elseif ($job->payment_status === 'partial') bg-yellow-500
-                                @else bg-red-500 @endif"></span>
-                            {{ ucfirst($job->payment_status) }}
-                        </span>
+                        <x-payment-badge :status="$job->payment_status" />
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex justify-end gap-2">
@@ -279,11 +258,16 @@
                     </svg>
                     <h3 class="mt-2 font-medium text-[var(--app-text)]">No job cards found</h3>
                     <p class="mt-1 text-sm text-[var(--app-muted)]">Get started by creating a new job card</p>
+                    <div class="mt-6">
+                        <a href="{{ route('jobs.create') }}" class="inline-flex items-center gap-2 rounded-2xl bg-[var(--app-accent)] px-5 py-2.5 text-sm font-bold text-black transition hover:opacity-90 shadow-sm hover:shadow">
+                            + Create Job Card
+                        </a>
+                    </div>
                 </div>
             @endforelse
         </div>
 
-        <!-- Pagination -->
+
         @if ($jobs->hasPages())
             <div class="mt-6">
                 {{ $jobs->links() }}

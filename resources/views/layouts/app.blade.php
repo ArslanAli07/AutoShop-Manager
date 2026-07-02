@@ -1,4 +1,4 @@
-<!-- SEO: semantic HTML, dynamic titles, meta descriptions, ARIA roles applied -->
+
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 
@@ -11,12 +11,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="canonical" href="{{ url()->current() }}">
 
-    <title>@yield('title', 'AutoShop Manager')</title>
-    <meta name="description" content="@yield('meta_description', 'Professional auto shop job card management system for PKR pricing, bilingual Urdu support, and complete customer and vehicle tracking.')" <link rel="preconnect" href="https://fonts.googleapis.com">
+    <meta name="description" content="@yield('meta_description', 'Professional auto shop job card management system for PKR pricing, bilingual Urdu support, and complete customer and vehicle tracking.')">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap"
         rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <script>
         (function() {
@@ -167,31 +168,36 @@
                 </div>
             </header>
 
-            @if (session('success') || session('error') || $errors->any())
-                <div class="px-4 py-4 sm:px-6 lg:px-8">
-                    @if (session('success'))
-                        <div role="alert"
-                            class="rounded-lg border border-(--app-border) bg-(--app-surface) px-4 py-3 text-sm text-green-700">
-                            {{ session('success') }}</div>
-                    @endif
 
-                    @if (session('error'))
-                        <div role="alert"
-                            class="rounded-lg border border-(--app-border) bg-(--app-surface) px-4 py-3 text-sm text-red-700">
-                            {{ session('error') }}</div>
-                    @endif
+            <div x-data="{ show: false, message: '', type: 'success' }" 
+                 @notify.window="show = true; message = $event.detail.message; type = $event.detail.type; setTimeout(() => show = false, 3000)"
+                 x-show="show" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 translate-y-4"
+                 class="fixed bottom-5 right-5 z-50 rounded-xl px-6 py-4 shadow-xl text-white font-medium"
+                 :class="type === 'success' ? 'bg-emerald-600' : 'bg-red-600'"
+                 style="display: none;">
+                <span x-text="message"></span>
+            </div>
 
-                    @if ($errors->any())
-                        <div role="alert"
-                            class="rounded-lg border border-(--app-border) bg-(--app-surface) px-4 py-3 text-sm text-red-700">
-                            <ul class="list-disc pl-5">
-                                @foreach ($errors->all() as $err)
-                                    <li>{{ $err }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                </div>
+            @if (session('success'))
+                <script>
+                    document.addEventListener('alpine:init', () => {
+                        setTimeout(() => window.dispatchEvent(new CustomEvent('notify', { detail: { message: "{{ session('success') }}", type: 'success' }})), 100);
+                    });
+                </script>
+            @endif
+
+            @if (session('error'))
+                <script>
+                    document.addEventListener('alpine:init', () => {
+                        setTimeout(() => window.dispatchEvent(new CustomEvent('notify', { detail: { message: "{{ session('error') }}", type: 'error' }})), 100);
+                    });
+                </script>
             @endif
 
             <main role="main" class="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">

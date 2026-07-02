@@ -10,6 +10,7 @@ use App\Models\JobPart;
 use App\Models\ServicePreset;
 use App\Models\PartReference;
 use App\Http\Requests\StoreIntakeRequest;
+use App\Services\JobService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -26,24 +27,7 @@ class IntakeController extends Controller
         return view('intake_create', compact('servicePresets', 'partReferences'));
     }
 
-    /**
-     * Generate unique job number: JC-YYYY-XXXX
-     */
-    private function generateJobNumber(): string
-    {
-        $year = date('Y');
-        $lastJob = Job::where('job_number', 'like', "JC-{$year}-%")
-            ->orderBy('id', 'desc')
-            ->first();
 
-        $sequence = 1;
-        if ($lastJob) {
-            $parts = explode('-', $lastJob->job_number);
-            $sequence = (int) ($parts[2] ?? 0) + 1;
-        }
-
-        return "JC-{$year}-" . str_pad($sequence, 4, '0', STR_PAD_LEFT);
-    }
 
     /**
      * Validate and create Customer + Car + Job in a single transaction.
@@ -69,7 +53,7 @@ class IntakeController extends Controller
                 ]);
 
                 $job = Job::create([
-                    'job_number' => $this->generateJobNumber(),
+                    'job_number' => app(JobService::class)->generateJobNumber(),
                     'customer_id' => $customer->id,
                     'car_id' => $car->id,
                     'date_in' => now()->toDateString(),
