@@ -15,7 +15,7 @@ AutoShop Manager is a modern, comprehensive web application built with **Laravel
 
 ## 🛠️ Tech Stack
 
-- **Backend:** Laravel 11 (PHP)
+- **Backend:** Laravel 12 (PHP)
 - **Database:** SQLite (default for easy setup, configurable to MySQL/PostgreSQL)
 - **Frontend:** Laravel Blade, Tailwind CSS v4, Alpine.js
 - **Icons:** SVG-based inline icons (Blade UI Kit compatible structure)
