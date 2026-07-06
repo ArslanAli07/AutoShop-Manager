@@ -17,7 +17,7 @@
     @endphp
 
     <section aria-label="Create new job card" class="max-w-4xl mx-auto pb-10" x-data="jobForm(
-        @js($cars->groupBy('customer_id')), 
+        @js($customers->mapWithKeys(fn($c) => [$c->id => $c->cars])), 
         @js($servicePresets->keyBy('id')), 
         @js($partReferences->keyBy('id')), 
         '{{ $preselectedCarId }}'
@@ -113,11 +113,11 @@
                             </div>
                             <div class="flex-1">
                                 <x-label class="mb-1 text-xs" value="Description" />
-                                <x-input :name="`services[${index}][description]`" x-model="service.desc" placeholder="Notes..." class="py-2.5" />
+                                <x-input x-bind:name="`services[${index}][description]`" x-model="service.desc" placeholder="Notes..." class="py-2.5" />
                             </div>
                             <div class="w-32">
                                 <x-label class="mb-1 text-xs" value="Labor Cost" />
-                                <x-input type="number" :name="`services[${index}][labor_cost]`" x-model="service.cost" required class="py-2.5" />
+                                <x-input type="number" x-bind:name="`services[${index}][labor_cost]`" x-model="service.cost" required class="py-2.5" />
                             </div>
                             <button type="button" @click="removeService(index)" class="px-2 py-3 text-red-500 hover:text-red-700 transition">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -154,11 +154,11 @@
                             </div>
                             <div class="w-20">
                                 <x-label class="mb-1 text-xs" value="Qty" />
-                                <x-input type="number" :name="`parts[${index}][quantity]`" x-model="part.qty" min="1" required class="py-2.5" />
+                                <x-input type="number" x-bind:name="`parts[${index}][quantity]`" x-model="part.qty" min="1" required class="py-2.5" />
                             </div>
                             <div class="flex-1">
                                 <x-label class="mb-1 text-xs" value="Unit Price" />
-                                <x-input type="number" :name="`parts[${index}][unit_price]`" x-model="part.price" min="0" required class="py-2.5" />
+                                <x-input type="number" x-bind:name="`parts[${index}][unit_price]`" x-model="part.price" min="0" required class="py-2.5" />
                             </div>
                             <button type="button" @click="removePart(index)" class="px-2 py-3 text-red-500 hover:text-red-700 transition">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>

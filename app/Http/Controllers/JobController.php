@@ -11,7 +11,7 @@ use App\Models\JobService;
 use App\Models\JobPart;
 use App\Http\Requests\StoreJobRequest;
 use App\Http\Requests\UpdateJobRequest;
-use App\Services\JobService;
+
 use Illuminate\Http\Request;
 
 class JobController extends Controller
@@ -78,7 +78,7 @@ class JobController extends Controller
      */
     public function create()
     {
-        $customers = Customer::orderBy('name')->get();
+        $customers = Customer::with('cars')->orderBy('name')->get();
         $servicePresets = ServicePreset::orderBy('category')->orderBy('name')->get();
         $partReferences = PartReference::orderBy('name')->get();
 
@@ -93,7 +93,7 @@ class JobController extends Controller
         $validated = $request->validated();
 
         $job = Job::create([
-            'job_number' => app(JobService::class)->generateJobNumber(),
+            'job_number' => app(\App\Services\JobService::class)->generateJobNumber(),
             'customer_id' => $validated['customer_id'],
             'car_id' => $validated['car_id'],
             'date_in' => $validated['date_in'],
@@ -161,7 +161,7 @@ class JobController extends Controller
     public function edit(Job $job)
     {
         $job->load('customer', 'car', 'services', 'parts');
-        $customers = Customer::orderBy('name')->get();
+        $customers = Customer::with('cars')->orderBy('name')->get();
         $cars = Car::orderBy('plate_number')->get();
         $servicePresets = ServicePreset::orderBy('category')->orderBy('name')->get();
         $partReferences = PartReference::orderBy('name')->get();

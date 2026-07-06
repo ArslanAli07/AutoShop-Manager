@@ -10,7 +10,7 @@ use App\Models\JobPart;
 use App\Models\ServicePreset;
 use App\Models\PartReference;
 use App\Http\Requests\StoreIntakeRequest;
-use App\Services\JobService;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -53,7 +53,7 @@ class IntakeController extends Controller
                 ]);
 
                 $job = Job::create([
-                    'job_number' => app(JobService::class)->generateJobNumber(),
+                    'job_number' => app(\App\Services\JobService::class)->generateJobNumber(),
                     'customer_id' => $customer->id,
                     'car_id' => $car->id,
                     'date_in' => now()->toDateString(),

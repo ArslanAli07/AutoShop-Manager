@@ -7,24 +7,14 @@
 @section('content')
     <section aria-label="Job card details" class="w-full space-y-6">
 
-        {{-- Flash Success --}}
-        @if (session('success'))
-            <div id="flash-success"
-                class="mb-4 flex items-center gap-3 rounded-2xl border border-green-500/30 bg-green-500/10 px-5 py-4 text-base text-green-400 shadow-sm transition-all duration-300">
-                <svg class="h-6 w-6 flex-shrink-0 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-                <span class="font-bold">{{ session('success') }}</span>
-            </div>
-        @endif
 
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border-b border-[var(--app-border)] pb-6 w-full">
             <div class="space-y-3">
-                <div class="flex flex-wrap items-center gap-3">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                     <h1 class="text-3xl font-extrabold tracking-tight text-[var(--app-text)]">{{ $job->job_number }}</h1>
                     
                     {{-- Status Badges: Spacious Paddings & High-Fidelity SVG Icons --}}
-                    <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex flex-row items-center gap-2">
                         <x-status-badge :status="$job->status" variant="display" />
 
                         <x-payment-badge :status="$job->payment_status" variant="display" />
@@ -39,7 +29,7 @@
             </div>
 
             {{-- Actions Buttons --}}
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                 {{-- Quick Progress Action Button --}}
                 @if ($job->status === 'received')
                     <form method="POST" action="{{ route('jobs.update-status', $job->id) }}" class="inline">
@@ -480,9 +470,5 @@
         </div>
     </div>
 
-    <script>
-        // Auto-dismiss flash message after 4 seconds
-        const flash = document.getElementById('flash-success');
-        if (flash) setTimeout(() => flash.style.opacity = '0', 3500);
-    </script>
+
 @endsection

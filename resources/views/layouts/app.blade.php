@@ -178,9 +178,9 @@
                  x-transition:leave="transition ease-in duration-200"
                  x-transition:leave-start="opacity-100 translate-y-0"
                  x-transition:leave-end="opacity-0 translate-y-4"
-                 class="fixed bottom-5 right-5 z-50 rounded-xl px-6 py-4 shadow-xl text-white font-medium"
+                 class="fixed z-50 rounded-xl px-6 py-4 shadow-xl text-white font-medium normal-case tracking-normal"
                  :class="type === 'success' ? 'bg-emerald-600' : 'bg-red-600'"
-                 style="display: none;">
+                 style="display: none; bottom: 1.5rem; right: 1.5rem;">
                 <span x-text="message"></span>
             </div>
 
